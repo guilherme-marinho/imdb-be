@@ -4,6 +4,13 @@ import { IMovieRepository } from "../interfaces/IMovieRepository";
 import { CreateMovieDTO } from "../dtos/createMovieDTO";
 
 class MovieRepository implements IMovieRepository {
+  async checkStar(imdbID: string): Promise<boolean> {
+    const movie = await prisma.movie.findFirst({
+      where: { imdbID },
+    });
+
+    return movie.starred;
+  }
   async findById(id: string): Promise<Movie | null> {
     const movie = await prisma.movie.findFirst({
       where: { imdbID: id },

@@ -6,7 +6,6 @@ export class ToggleFavoriteController {
   public async handle(req: Request, res: Response): Promise<Response> {
     const { imdbID } = req.params;
     const { starred } = req.body;
-    console.log(123123);
 
     const movieRepository = new MovieRepository();
     const toggleFavoriteService = new ToggleFavoriteService(movieRepository);
