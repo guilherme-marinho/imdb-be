@@ -2,40 +2,22 @@ openapi: "3.0.2"
 info:
   title: iMDB API
   version: "1.0"
-components:
-  # securitySchemes:
-  #   bearerAuth:
-  #     type: http
-  #     scheme: bearer
-  #     bearerFormat: JWT
-  #     description: Enter your bearer token in the format **bearer &lt;token>**
-  parameters:
-    offsetParam:
-      in: query
-      name: offset
-      schema:
-        type: integer
-        default: 0
-        minimum: 0
-      required: false
-      description: The number of items to skip before starting to collect the result set
-    limitParam:
-      in: query
-      name: limit
-      schema:
-        type: integer
-        default: 10
-        minimum: 1
-        maximum: 50
-      required: false
-      description: The maximum numbers of items to return per page
 tags:
-  - name: Movies
+  - name: Movie
 paths:
-  /movies:
+  /movie/title/{title}:
     get:
       tags:
-        - Movies
+        - Movie
+      summary: Busca de um filme pelo seu titulo
+      parameters:
+        - in: path
+          name: title
+          schema:
+            type: string
+            example: harry potter
+          required: true
+          description: Movie Title
       responses:
         "200":
           description: Search done with success
@@ -44,8 +26,129 @@ paths:
               schema:
                 type: object
                 example:
-                  id: d139015f-3b1c-4d05-b303-73bcfdd91149
-                  message: Listed with success
+                  data:
+                    Title: "Harry Potter and the Deathly Hallows: Part 2"
+                    Year: "2011"
+                    Rated: PG-13
+                    Released: 15 Jul 2011
+                    Runtime: 130 min
+                    Genre: Adventure, Family, Fantasy
+                    Director: David Yates
+                    Writer: Steve Kloves, J.K. Rowling
+                    Actors: Daniel Radcliffe, Emma Watson, Rupert Grint
+                    Plot: Harry, Ron, and Hermione search for Voldemort's remaining Horcruxes in their effort to destroy the Dark Lord as the final battle rages on at Hogwarts.
+                    Language: English, Latin
+                    Country: United Kingdom, United States
+                    Awards: Nominated for 3 Oscars. 47 wins & 94 nominations total
+                    Poster: https://m.media-amazon.com/images/M/MV5BMGVmMWNiMDktYjQ0Mi00MWIxLTk0N2UtN2ZlYTdkN2IzNDNlXkEyXkFqcGdeQXVyODE5NzE3OTE@._V1_SX300.jpg
+                    Ratings:
+                      - Source: Internet Movie Database
+                        Value: 8.1/10
+                      - Source: Rotten Tomatoes
+                        Value: 96%
+                      - Source: Metacritic
+                        Value: 85/100
+                    Metascore: "85"
+                    imdbRating: "8.1"
+                    imdbVotes: 910,461
+                    imdbID: tt1201607
+                    Type: movie
+                    DVD: 20 Jul 2013
+                    BoxOffice: $381,447,587
+                    Production: N/A
+                    Website: N/A
+                    Response: True
+
+        "401":
+          description: "Error: Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error: Unauthorized
+        "404":
+          description: "Error: Not Found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error: Movie not found
+  /movie/star/{imdbID}:
+    get:
+      tags:
+        - Movie
+      summary: Busca o estado de favorito de um filme pelo seu imdbID
+      parameters:
+        - in: path
+          name: imdbID
+          schema:
+            type: string
+            example: tt1201607
+          required: true
+          description: Movie imdbID
+      responses:
+        "200":
+          description: Search done with success
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  data: true
+        "401":
+          description: "Error: Unauthorized"
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error: Unauthorized
+        "404":
+          description: "Error: Not Found"
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  error: Movie not found
+
+  /movie/toggle/{imdbID}:
+    post:
+      tags:
+        - Movie
+      summary: Altera o estado de favorito de um filme pelo seu imdbID
+      parameters:
+        - in: path
+          name: imdbID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - starred
+              properties:
+                starred:
+                  type: boolean
+      responses:
+        "200":
+          description: Movie favorite state updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  imdbID:
+                    type: string
+                  starred:
+                    type: boolean
         "401":
           description: "Error: Unauthorized"
           content:
